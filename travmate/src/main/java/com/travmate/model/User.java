@@ -1,30 +1,3 @@
-//
-//package com.travmate.model;
-//
-//import jakarta.persistence.*;
-//        import lombok.*;
-//
-//@Entity
-//@Table(name = "users")
-//@Data
-//@NoArgsConstructor
-////@AllArgsConstructor
-//public class User {
-//
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long id;
-//
-//    @Column(nullable = false, unique = true)
-//    private String email;
-//
-//    @Column(name = "password",nullable = false)
-//    private String password;
-//
-//    @Column(name = "name")
-//    private String name;
-//}
-
 
 package com.travmate.model;
 
@@ -47,18 +20,18 @@ public class User {
     @Column
     private String name;
 
-    // --- Default constructor (needed by JPA) ---
+    // Default constructor (needed by JPA)
     public User() {
     }
 
-    // --- Constructor without id (for creating new users) ---
+    // Constructor without id (for creating new users)
     public User(String email, String password, String name) {
         this.email = email;
         this.password = password;
         this.name = name;
     }
 
-    // --- Getters & Setters ---
+    // Getters & Setters
     public Long getId() {
         return id;
     }

@@ -69,15 +69,3 @@ public class UserController {
                 .orElse(ResponseEntity.notFound().build());
     }
 }
-/*^✅ Now we have REST APIs:
-
-POST /api/users → Create a new user
-
-GET /api/users → Get all users
-
-GET /api/users/{id} → Get user by ID
-
-PUT /api/users/{id} -> Update user by ID
-
-DELETE /api/users/{id} -> Delete user by ID
-*/
