@@ -2,10 +2,14 @@ package com.travmate.security;
 
 import com.travmate.model.User;
 import com.travmate.repository.UserRepository;
+import org.springframework.context.annotation.Primary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
 
+
+
+@Primary
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
