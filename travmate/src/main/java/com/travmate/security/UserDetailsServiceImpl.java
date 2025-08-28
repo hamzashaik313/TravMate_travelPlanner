@@ -1,13 +1,16 @@
+
 package com.travmate.security;
 
 import com.travmate.model.User;
 import com.travmate.repository.UserRepository;
-import org.springframework.context.annotation.Primary;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
 
-
+import java.util.Collections;
 
 @Primary
 @Service
@@ -21,10 +24,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
-        return org.springframework.security.core.userdetails.User
-                .withUsername(user.getEmail())
-                .password(user.getPassword())
-                .authorities("USER")
-                .build();
+        // Use role from DB directly (already includes ROLE_ prefix)
+        GrantedAuthority authority = new SimpleGrantedAuthority(user.getRole());
+
+        return new org.springframework.security.core.userdetails.User(
+                user.getEmail(),
+                user.getPassword(),
+                Collections.singleton(authority)
+        );
     }
 }

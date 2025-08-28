@@ -5,17 +5,21 @@ import com.travmate.model.User;
 import com.travmate.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/user")  // 🔑 changed from /api/users to /api/user
 public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
 
     // CREATE User
     @PostMapping
@@ -46,17 +50,34 @@ public class UserController {
     }
 
     // UPDATE User
+//    @PutMapping("/{id}")
+//    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
+//        return userService.getUserById(id)
+//                .map(existingUser -> {
+//                    existingUser.setName(userDetails.getName());
+//                    existingUser.setEmail(userDetails.getEmail());
+//                    existingUser.setPassword(userDetails.getPassword());
+//                    return ResponseEntity.ok(userService.saveUser(existingUser));
+//                })
+//                .orElse(ResponseEntity.notFound().build());
+//    }
+
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
         return userService.getUserById(id)
                 .map(existingUser -> {
                     existingUser.setName(userDetails.getName());
                     existingUser.setEmail(userDetails.getEmail());
-                    existingUser.setPassword(userDetails.getPassword());
+
+                    if (userDetails.getPassword() != null && !userDetails.getPassword().isEmpty()) {
+                        existingUser.setPassword(passwordEncoder.encode(userDetails.getPassword()));
+                    }
+
                     return ResponseEntity.ok(userService.saveUser(existingUser));
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
+
 
     // DELETE User
     @DeleteMapping("/{id}")
@@ -68,4 +89,11 @@ public class UserController {
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    // Test endpoint
+    @GetMapping("/hello")
+    public String helloUser() {
+        return "Hello USER ✅";
+    }
+
 }
