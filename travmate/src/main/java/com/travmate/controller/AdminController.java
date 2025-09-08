@@ -13,4 +13,3 @@ public class AdminController {
         return "Hello ADMIN ✅";
     }
 }
-
