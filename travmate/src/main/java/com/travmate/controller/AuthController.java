@@ -32,18 +32,50 @@ public class AuthController {
     private JwtUtil jwtUtil;
 
     // ✅ Register User (default role = ROLE_USER)
+//    @PostMapping("/register")
+//    public ResponseEntity<?> register(@RequestBody User user) {
+//        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+//            return ResponseEntity.badRequest().body("Email already exists!");
+//        }
+//
+//        user.setPassword(passwordEncoder.encode(user.getPassword()));
+//        user.setRole("ROLE_USER"); // Default role for regular users
+//        userRepository.save(user);
+//
+//        return ResponseEntity.ok("User registered successfully!");
+//    }
+//    @PostMapping("/register")
+//    public ResponseEntity<?> register(@RequestBody User user) {
+//        if (user.getPassword() == null || user.getPassword().isBlank()) {
+//            return ResponseEntity.badRequest().body("Password cannot be empty!");
+//        }
+//        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+//            return ResponseEntity.badRequest().body("Email already exists!");
+//        }
+//
+//        user.setPassword(passwordEncoder.encode(user.getPassword()));
+//        user.setRole("ROLE_USER"); // Default role
+//        userRepository.save(user);
+//
+//        return ResponseEntity.ok("User registered successfully!");
+//    }
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
+        if (user.getPassword() == null || user.getPassword().isBlank()) {
+            return ResponseEntity.badRequest().body("Password cannot be empty!");
+        }
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             return ResponseEntity.badRequest().body("Email already exists!");
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole("ROLE_USER"); // Default role for regular users
+        user.setRole("ROLE_USER"); // Default role
         userRepository.save(user);
 
         return ResponseEntity.ok("User registered successfully!");
     }
+
+
 
     // ✅ Register Admin (optional, only for admin setup)
     @PostMapping("/register-admin")

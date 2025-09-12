@@ -1,6 +1,7 @@
 
 package com.travmate.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -15,6 +16,7 @@ public class User {
     private String email;
 
     @Column(nullable = false)
+    @JsonIgnore   //  hides password from JSON response
     private String password;
 
     private String name;
