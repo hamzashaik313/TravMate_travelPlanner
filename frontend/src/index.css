@@ -1,13 +1,28 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom variables */
+:root {
+  --radius-lg: 16px;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* Set default background and text */
+body {
+  @apply bg-tmBg text-gray-800 font-inter;
+}
+
+/* Hero background pattern */
+.bg-hero {
+  background: radial-gradient(
+      800px 400px at 10% 30%,
+      rgba(108, 92, 231, 0.09),
+      transparent 10%
+    ),
+    radial-gradient(
+      600px 300px at 90% 80%,
+      rgba(0, 184, 148, 0.06),
+      transparent 15%
+    ),
+    linear-gradient(180deg, #ffffff 0%, #f7f9ff 100%);
 }

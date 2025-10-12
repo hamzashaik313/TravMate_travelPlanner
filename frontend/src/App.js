@@ -8,6 +8,11 @@ import AddTrip from "./components/AddTrip";
 import TripDetails from "./components/TripDetails";
 
 // ✅ new component
+// function App() {
+//   return (
+//     <div className="text-3xl text-tmPurple font-inter">Tailwind works!</div>
+//   );
+// }
 
 function App() {
   return (
