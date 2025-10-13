@@ -15,12 +15,8 @@ public class ItineraryController {
     private ItineraryService itineraryService;
 
     @PostMapping("/generate/{tripId}")
-    public List<Itinerary> generate(@PathVariable Long tripId) {
+    public List<Itinerary> generateItinerary(@PathVariable Long tripId) {
         return itineraryService.generateItinerary(tripId);
     }
-
-    @GetMapping("/{tripId}")
-    public List<Itinerary> get(@PathVariable Long tripId) {
-        return itineraryService.getItinerary(tripId);
-    }
 }
+
