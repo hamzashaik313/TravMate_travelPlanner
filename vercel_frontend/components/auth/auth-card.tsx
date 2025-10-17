@@ -1,72 +1,109 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { useToast } from "@/hooks/use-toast"
-import { postJson } from "@/lib/api"
-import { useAuth } from "./auth-context"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardDescription,
+} from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { postJson } from "@/lib/api";
+import { useAuth } from "./auth-context";
 
 export function AuthCard() {
-  const [tab, setTab] = useState<"login" | "signup">("login")
-  const { toast } = useToast()
-  const router = useRouter()
-  const { login } = useAuth()
+  const [tab, setTab] = useState<"login" | "signup">("login");
+  const { toast } = useToast();
+  const router = useRouter();
+  const { login } = useAuth();
 
   // form states
-  const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [loading, setLoading] = useState(false)
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const resetFields = () => {
-    setName("")
-    setEmail("")
-    setPassword("")
-  }
+    setName("");
+    setEmail("");
+    setPassword("");
+  };
 
   const handleSignUp = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      await postJson("/auth/register", { name, email, password }, { withAuth: false })
-      toast({ title: "Account created", description: "You can now log in." })
-      resetFields()
-      setTab("login")
+      await postJson(
+        "/auth/register",
+        { name, email, password },
+        { withAuth: false }
+      );
+      toast({ title: "Account created", description: "You can now log in." });
+      resetFields();
+      setTab("login");
     } catch (e: any) {
-      toast({ title: "Sign up failed", description: e.message, variant: "destructive" })
+      toast({
+        title: "Sign up failed",
+        description: e.message,
+        variant: "destructive",
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleLogin = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const res = await postJson<{ token: string; user?: { name?: string; email?: string } }>(
-        "/auth/login",
-        { email, password },
-        { withAuth: false },
-      )
-      const user = res.user ?? { name: "Traveler", email }
-      login(res.token, user)
-      toast({ title: "Welcome", description: `Logged in as ${user.name || user.email}` })
-      router.push("/dashboard")
+      // Call backend login API
+      const res = await postJson<{
+        token: string;
+        displayName: string;
+        email: string;
+      }>("/auth/login", { email, password }, { withAuth: false });
+
+      // Build user object for auth context
+      const user = {
+        name: res.displayName || res.email.split("@")[0], // fallback if displayName is missing
+        email: res.email,
+      };
+
+      // Save login state
+      login(res.token, user);
+
+      // Show toast / popup
+      toast({
+        title: "Welcome",
+        description: `Logged in as ${user.name}`,
+      });
+
+      // Redirect to dashboard
+      router.push("/dashboard");
     } catch (e: any) {
-      toast({ title: "Login failed", description: e.message, variant: "destructive" })
+      toast({
+        title: "Login failed",
+        description: e.message || "Invalid email or password",
+        variant: "destructive",
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <Card className="w-full max-w-md border border-border">
       <CardHeader>
-        <CardTitle className="text-center text-balance">Welcome to Travmate</CardTitle>
-        <CardDescription className="text-center">Plan, track, and explore your trips with ease.</CardDescription>
+        <CardTitle className="text-center text-balance">
+          Welcome to Travmate
+        </CardTitle>
+        <CardDescription className="text-center">
+          Plan, track, and explore your trips with ease.
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <Tabs value={tab} onValueChange={(v) => setTab(v as any)}>
@@ -79,7 +116,12 @@ export function AuthCard() {
             <div className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="name">Name</Label>
-                <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Alex Traveler" />
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Alex Traveler"
+                />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
@@ -101,7 +143,11 @@ export function AuthCard() {
                   placeholder="••••••••"
                 />
               </div>
-              <Button className="w-full" onClick={handleSignUp} disabled={loading}>
+              <Button
+                className="w-full"
+                onClick={handleSignUp}
+                disabled={loading}
+              >
                 {loading ? "Creating account..." : "Create Account"}
               </Button>
             </div>
@@ -129,7 +175,11 @@ export function AuthCard() {
                   placeholder="••••••••"
                 />
               </div>
-              <Button className="w-full" onClick={handleLogin} disabled={loading}>
+              <Button
+                className="w-full"
+                onClick={handleLogin}
+                disabled={loading}
+              >
                 {loading ? "Logging in..." : "Log In"}
               </Button>
             </div>
@@ -137,5 +187,5 @@ export function AuthCard() {
         </Tabs>
       </CardContent>
     </Card>
-  )
+  );
 }
