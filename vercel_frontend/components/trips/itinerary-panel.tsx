@@ -1,35 +1,49 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { postJson } from "@/lib/api"
-import { useToast } from "@/hooks/use-toast"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { useState } from "react";
+import { postJson } from "@/lib/api";
+import { useToast } from "@/hooks/use-toast";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 type ItineraryItem = {
-  dayNumber: number
-  activity: string
-  estimatedCost: number
-}
+  dayNumber: number;
+  activity: string;
+  estimatedCost: number;
+};
 
 export function ItineraryPanel({ tripId }: { tripId: string }) {
-  const { toast } = useToast()
-  const [items, setItems] = useState<ItineraryItem[] | null>(null)
-  const [loading, setLoading] = useState(false)
+  const { toast } = useToast();
+  const [items, setItems] = useState<ItineraryItem[] | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const generate = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const res = await postJson<ItineraryItem[]>(`/api/itinerary/generate/${tripId}`, {})
-      setItems(res || [])
-      toast({ title: "Itinerary generated" })
+      const res = await postJson<ItineraryItem[]>(
+        `/api/itinerary/generate/${tripId}`,
+        {}
+      );
+      setItems(res || []);
+      toast({ title: "Itinerary generated" });
     } catch (e: any) {
-      toast({ title: "Failed to generate", description: e.message, variant: "destructive" })
+      toast({
+        title: "Failed to generate",
+        description: e.message,
+        variant: "destructive",
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <Card>
@@ -59,7 +73,10 @@ export function ItineraryPanel({ tripId }: { tripId: string }) {
               ))}
               {(!items || items.length === 0) && (
                 <TableRow>
-                  <TableCell colSpan={3} className="text-center text-muted-foreground">
+                  <TableCell
+                    colSpan={3}
+                    className="text-center text-muted-foreground"
+                  >
                     No itinerary yet. Click “Generate Itinerary”.
                   </TableCell>
                 </TableRow>
@@ -69,5 +86,5 @@ export function ItineraryPanel({ tripId }: { tripId: string }) {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
