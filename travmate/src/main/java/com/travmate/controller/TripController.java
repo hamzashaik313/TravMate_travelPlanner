@@ -1,3 +1,4 @@
+
 package com.travmate.controller;
 
 import com.travmate.model.Trip;
@@ -23,26 +24,44 @@ public class TripController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Trip> getTripById(@PathVariable Long id) {
+        // NOTE: For full security, this method should ideally also take the Authentication object
+        // and verify that the logged-in user owns the trip before returning it.
         return tripService.getTripById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    //@GetMapping
+    // CRITICAL FIX: Added Authentication parameter and changed method call
+    // Inside TripController.java
+
     @GetMapping
-    public ResponseEntity<List<Trip>> getAllTrips() {
-        return ResponseEntity.ok(tripService.getAllTrips());
+    public ResponseEntity<List<Trip>> getAllTrips(Authentication authentication) {
+        // Now calls the new, secure method
+        return ResponseEntity.ok(tripService.getAllTripsByCreator(authentication.getName()));
     }
+
+// You must also remove the old, insecure:
+// @GetMapping
+// public ResponseEntity<List<Trip>> getAllTrips() {
+//     return ResponseEntity.ok(tripService.getAllTrips());
+// }
 
     @PutMapping("/{id}")
     public ResponseEntity<Trip> updateTrip(@PathVariable Long id,
                                            @RequestBody Trip trip,
                                            Authentication authentication) {
+        // Already secure: Passes user email to service layer for ownership check
         return ResponseEntity.ok(tripService.updateTrip(id, trip, authentication.getName()));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTrip(@PathVariable Long id, Authentication authentication) {
+        // Already secure: Passes user email to service layer for ownership check
         tripService.deleteTrip(id, authentication.getName());
         return ResponseEntity.noContent().build();
     }
 }
+
+
+

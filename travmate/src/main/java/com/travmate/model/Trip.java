@@ -49,5 +49,3 @@ public class Trip {
     public void setCreatedBy(User createdBy) { this.createdBy = createdBy; }
 }
 
-
-

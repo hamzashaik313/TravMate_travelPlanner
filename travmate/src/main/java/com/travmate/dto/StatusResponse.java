@@ -1,3 +1,4 @@
+
 package com.travmate.dto;
 
 public class StatusResponse {
@@ -7,11 +8,6 @@ public class StatusResponse {
         this.message = message;
     }
 
-    // Getters and Setters
-    public String getMessage() {
-        return message;
-    }
-    public void setMessage(String message) {
-        this.message = message;
-    }
+    public String getMessage() { return message; }
+    public void setMessage(String message) { this.message = message; }
 }

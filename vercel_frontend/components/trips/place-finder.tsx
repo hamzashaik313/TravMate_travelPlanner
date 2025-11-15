@@ -1,31 +1,37 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { apiFetch } from "@/lib/api"
-import { useToast } from "@/hooks/use-toast"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
+import { useState } from "react";
+import { apiFetch } from "@/lib/api";
+import { useToast } from "@/hooks/use-toast";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export function PlaceFinder() {
-  const [city, setCity] = useState("")
-  const [results, setResults] = useState<string[]>([])
-  const [loading, setLoading] = useState(false)
-  const { toast } = useToast()
+  const [city, setCity] = useState("");
+  const [results, setResults] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
 
   const search = async () => {
-    if (!city) return
-    setLoading(true)
+    if (!city) return;
+    setLoading(true);
     try {
-      const safeCity = encodeURIComponent(city.trim())
-      const list = await apiFetch<string[]>(`/api/geoapify/places/${safeCity}`)
-      setResults(list || [])
+      const safeCity = encodeURIComponent(city.trim());
+      // const list = await apiFetch<string[]>(`/api/geoapify/places/${safeCity}`)
+      const list = await apiFetch<string[]>(`/api/places/${safeCity}`);
+
+      setResults(list || []);
     } catch (e: any) {
-      toast({ title: "Search failed", description: e.message, variant: "destructive" })
+      toast({
+        title: "Search failed",
+        description: e.message,
+        variant: "destructive",
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <Card>
@@ -57,5 +63,5 @@ export function PlaceFinder() {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
