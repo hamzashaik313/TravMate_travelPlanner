@@ -16,7 +16,7 @@ public class Trip {
     private String destination;
     private LocalDate startDate;
     private LocalDate endDate;
-    private Double budget;
+
 
     @ManyToOne
     @JoinColumn(name = "created_by")
@@ -41,9 +41,6 @@ public class Trip {
 
     public LocalDate getEndDate() { return endDate; }
     public void setEndDate(LocalDate endDate) { this.endDate = endDate; }
-
-    public Double getBudget() { return budget; }
-    public void setBudget(Double budget) { this.budget = budget; }
 
     public User getCreatedBy() { return createdBy; }
     public void setCreatedBy(User createdBy) { this.createdBy = createdBy; }

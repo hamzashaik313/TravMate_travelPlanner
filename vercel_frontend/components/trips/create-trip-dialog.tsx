@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { useToast } from "@/hooks/use-toast"
-import { postJson } from "@/lib/api"
-import { mutate } from "swr"
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { postJson } from "@/lib/api";
+import { mutate } from "swr";
 import {
   Dialog,
   DialogContent,
@@ -13,43 +13,55 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export function CreateTripDialog({ children }: { children: React.ReactNode }) {
-  const [open, setOpen] = useState(false)
-  const { toast } = useToast()
+  const [open, setOpen] = useState(false);
+  const { toast } = useToast();
+
   const [form, setForm] = useState({
     title: "",
     destination: "",
     startDate: "",
     endDate: "",
-    budget: "",
-  })
-  const [loading, setLoading] = useState(false)
+  });
+
+  const [loading, setLoading] = useState(false);
 
   const submit = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
       await postJson("/api/trips", {
         title: form.title,
         destination: form.destination,
         startDate: form.startDate,
         endDate: form.endDate,
-        budget: Number(form.budget),
-      })
-      toast({ title: "Trip created" })
-      setOpen(false)
-      setForm({ title: "", destination: "", startDate: "", endDate: "", budget: "" })
-      mutate("/api/trips")
+      });
+
+      toast({ title: "Trip created" });
+      setOpen(false);
+
+      setForm({
+        title: "",
+        destination: "",
+        startDate: "",
+        endDate: "",
+      });
+
+      mutate("/api/trips");
     } catch (e: any) {
-      toast({ title: "Failed to create trip", description: e.message, variant: "destructive" })
+      toast({
+        title: "Failed to create trip",
+        description: e.message,
+        variant: "destructive",
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -57,21 +69,32 @@ export function CreateTripDialog({ children }: { children: React.ReactNode }) {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Plan New Trip</DialogTitle>
-          <DialogDescription>Enter trip details and create your new adventure.</DialogDescription>
+          <DialogDescription>
+            Enter trip details and create your new adventure.
+          </DialogDescription>
         </DialogHeader>
+
         <div className="grid gap-4 py-2">
           <div className="grid gap-2">
             <Label htmlFor="title">Title</Label>
-            <Input id="title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+            <Input
+              id="title"
+              value={form.title}
+              onChange={(e) => setForm({ ...form, title: e.target.value })}
+            />
           </div>
+
           <div className="grid gap-2">
             <Label htmlFor="destination">Destination</Label>
             <Input
               id="destination"
               value={form.destination}
-              onChange={(e) => setForm({ ...form, destination: e.target.value })}
+              onChange={(e) =>
+                setForm({ ...form, destination: e.target.value })
+              }
             />
           </div>
+
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="grid gap-2">
               <Label htmlFor="startDate">Start Date</Label>
@@ -79,9 +102,12 @@ export function CreateTripDialog({ children }: { children: React.ReactNode }) {
                 id="startDate"
                 type="date"
                 value={form.startDate}
-                onChange={(e) => setForm({ ...form, startDate: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, startDate: e.target.value })
+                }
               />
             </div>
+
             <div className="grid gap-2">
               <Label htmlFor="endDate">End Date</Label>
               <Input
@@ -92,17 +118,8 @@ export function CreateTripDialog({ children }: { children: React.ReactNode }) {
               />
             </div>
           </div>
-          <div className="grid gap-2">
-            <Label htmlFor="budget">Budget</Label>
-            <Input
-              id="budget"
-              type="number"
-              step="0.01"
-              value={form.budget}
-              onChange={(e) => setForm({ ...form, budget: e.target.value })}
-            />
-          </div>
         </div>
+
         <div className="flex justify-end gap-2">
           <Button variant="outline" onClick={() => setOpen(false)}>
             Cancel
@@ -113,5 +130,5 @@ export function CreateTripDialog({ children }: { children: React.ReactNode }) {
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
