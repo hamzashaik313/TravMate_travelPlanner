@@ -13,6 +13,7 @@ public class Itinerary implements Serializable {
 
     private int dayNumber;
 
+
     private String activity;
 
     @ManyToOne
@@ -41,4 +42,5 @@ public class Itinerary implements Serializable {
     public Trip getTrip() { return trip; }
     public void setTrip(Trip trip) { this.trip = trip; }
 }
+
 

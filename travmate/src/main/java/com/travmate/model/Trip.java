@@ -17,6 +17,7 @@ public class Trip {
     private LocalDate startDate;
     private LocalDate endDate;
 
+    private String heroImageUrl;
 
     @ManyToOne
     @JoinColumn(name = "created_by")
@@ -25,8 +26,8 @@ public class Trip {
     @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Itinerary> itineraries = new ArrayList<>();
 
-
     // Getters & Setters
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -42,7 +43,11 @@ public class Trip {
     public LocalDate getEndDate() { return endDate; }
     public void setEndDate(LocalDate endDate) { this.endDate = endDate; }
 
+    public String getHeroImageUrl() { return heroImageUrl; }
+    public void setHeroImageUrl(String heroImageUrl) { this.heroImageUrl = heroImageUrl; }
+
     public User getCreatedBy() { return createdBy; }
     public void setCreatedBy(User createdBy) { this.createdBy = createdBy; }
 }
+
 

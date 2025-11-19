@@ -49,18 +49,6 @@ public class UserController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // UPDATE User
-//    @PutMapping("/{id}")
-//    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
-//        return userService.getUserById(id)
-//                .map(existingUser -> {
-//                    existingUser.setName(userDetails.getName());
-//                    existingUser.setEmail(userDetails.getEmail());
-//                    existingUser.setPassword(userDetails.getPassword());
-//                    return ResponseEntity.ok(userService.saveUser(existingUser));
-//                })
-//                .orElse(ResponseEntity.notFound().build());
-//    }
 
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {

@@ -4,7 +4,8 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/auth/auth-context";
 import { AppHeader } from "@/components/header";
-import { TripTable } from "@/components/trips/trip-table";
+import { TripCards } from "@/components/trips/TripCards";
+
 import { CreateTripDialog } from "@/components/trips/create-trip-dialog";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
@@ -25,14 +26,17 @@ export default function DashboardPage() {
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-2xl font-semibold">Trip Dashboard</h2>
+
           <CreateTripDialog>
             <Button className="gap-2">
               <Plus className="h-4 w-4" />
-              {"Plan New Trip"}
+              Plan New Trip
             </Button>
           </CreateTripDialog>
         </div>
-        <TripTable />
+
+        {/* 🔥 CARD VIEW */}
+        <TripCards />
       </main>
     </div>
   );

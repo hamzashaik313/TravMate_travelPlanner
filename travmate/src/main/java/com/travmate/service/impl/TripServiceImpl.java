@@ -23,6 +23,7 @@ public class TripServiceImpl implements TripService {
 
     @Override
     public Trip createTrip(Trip trip, String userEmail) {
+
         User user = userRepository.findByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("User not found!"));
         trip.setCreatedBy(user);
@@ -44,22 +45,23 @@ public class TripServiceImpl implements TripService {
         // This relies on the TripRepository having: List<Trip> findByCreatedBy(User user);
         return tripRepository.findByCreatedBy(creator);
     }
+@Override
+public Trip updateTrip(Long id, Trip tripDetails, String userEmail) {
+    Trip trip = tripRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Trip not found"));
 
-    // NOTE: Insecure getAllTrips() method implementation has been removed/modified to match interface.
-
-    @Override
-    public Trip updateTrip(Long id, Trip tripDetails, String userEmail) {
-        Trip trip = tripRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Trip not found"));
-
-        if (!trip.getCreatedBy().getEmail().equals(userEmail)) {
-            throw new RuntimeException("You are not allowed to update this trip!");
-        }
-
-        // ... (update logic) ...
-
-        return tripRepository.save(trip);
+    if (!trip.getCreatedBy().getEmail().equals(userEmail)) {
+        throw new RuntimeException("You are not allowed to update this trip!");
     }
+    trip.setTitle(tripDetails.getTitle());
+    trip.setDestination(tripDetails.getDestination());
+    trip.setStartDate(tripDetails.getStartDate());
+    trip.setEndDate(tripDetails.getEndDate());
+
+    // Save updated trip
+    return tripRepository.save(trip);
+}
+
 
     @Override
     public void deleteTrip(Long id, String userEmail) {
@@ -73,6 +75,7 @@ public class TripServiceImpl implements TripService {
         tripRepository.delete(trip);
     }
 }
+
 
 
 

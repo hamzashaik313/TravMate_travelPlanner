@@ -5,14 +5,7 @@ import { postJson } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { MapPin, CalendarDays } from "lucide-react";
 import { PlaceDetailModal } from "./place-detail-modal";
 
 type ItineraryItem = {
@@ -48,62 +41,58 @@ export function ItineraryPanel({ tripId }: { tripId: string }) {
     }
   };
 
-  const handleOpenDetails = (activity: string) => {
-    setSelectedActivity(activity);
+  const openDetails = (name: string) => {
+    setSelectedActivity(name);
     setIsModalOpen(true);
   };
 
   return (
-    <Card>
-      <CardHeader className="flex items-center justify-between space-y-0">
-        <CardTitle>Itinerary</CardTitle>
-      </CardHeader>
+    <Card className="rounded-2xl shadow-sm">
+      <CardHeader className="flex items-center justify-between">
+        <CardTitle className="text-xl font-semibold flex items-center gap-2">
+          <CalendarDays size={20} className="text-blue-600" /> Itinerary
+        </CardTitle>
 
-      <CardContent className="space-y-4">
-        <Button onClick={generate} disabled={loading}>
+        <Button
+          onClick={generate}
+          disabled={loading}
+          className="px-6 rounded-full"
+        >
           {loading ? "Generating..." : "Generate Itinerary"}
         </Button>
+      </CardHeader>
 
-        <div className="overflow-x-auto rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Day</TableHead>
-                <TableHead>Activity</TableHead>
-                <TableHead>Details</TableHead>
-              </TableRow>
-            </TableHeader>
+      <CardContent>
+        {/* LIST */}
+        <div className="space-y-3 mt-3">
+          {(items ?? []).map((it, idx) => (
+            <div
+              key={idx}
+              className="border rounded-xl p-4 flex items-center justify-between hover:bg-gray-50 transition cursor-pointer shadow-sm"
+            >
+              <div>
+                <p className="text-gray-500 text-sm font-medium">
+                  Day {it.dayNumber}
+                </p>
+                <p className="text-lg font-semibold">{it.activity}</p>
+              </div>
 
-            <TableBody>
-              {(items ?? []).map((it, idx) => (
-                <TableRow key={`${it.dayNumber}-${idx}`}>
-                  <TableCell>{it.dayNumber}</TableCell>
-                  <TableCell>{it.activity}</TableCell>
+              <Button
+                variant="link"
+                onClick={() => openDetails(it.activity)}
+                className="flex items-center gap-1 text-blue-600"
+              >
+                <MapPin size={18} />
+                View Map
+              </Button>
+            </div>
+          ))}
 
-                  <TableCell>
-                    <Button
-                      variant="link"
-                      size="sm"
-                      onClick={() => handleOpenDetails(it.activity)}
-                    >
-                      View Map
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-
-              {(!items || items.length === 0) && (
-                <TableRow>
-                  <TableCell
-                    colSpan={3}
-                    className="text-center text-muted-foreground"
-                  >
-                    No itinerary yet. Click “Generate Itinerary”.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+          {(!items || items.length === 0) && (
+            <p className="text-center text-gray-500 py-8">
+              No itinerary created yet. Click <b>“Generate Itinerary”</b>.
+            </p>
+          )}
         </div>
 
         <PlaceDetailModal

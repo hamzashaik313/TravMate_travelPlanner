@@ -52,9 +52,9 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // JWT: stateless
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()  // Allow preflight
-                    .requestMatchers("/auth/**").permitAll()                // Public endpoints
+                    .requestMatchers("/auth/**").permitAll().requestMatchers("/error").permitAll()   // Public endpoints
                     .requestMatchers("/api/places/**").permitAll()           // ✅ allow Google Places API without login
-                    .requestMatchers("/api/geoapify/**").permitAll()         // (optional) if still present
+//                    .requestMatchers("/api/geoapify/**").permitAll()         // (optional) if still present
                     .requestMatchers("/api/user/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN")
                     .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
                     .anyRequest().authenticated() // Everything else requires auth

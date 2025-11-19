@@ -34,9 +34,6 @@ public class AuthController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    // ==============================
-    // REGISTER USER (FIXED for all error returns)
-    // ==============================
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserRequest request) {
         // Validation check uses StatusResponse DTO
@@ -59,14 +56,12 @@ public class AuthController {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole("ROLE_USER");
 
-        userRepository.save(user); // **Note:** Ensure database is connected for this to succeed
+        userRepository.save(user);
 
         return ResponseEntity.ok(new StatusResponse("Account created successfully! Please log in."));
     }
 
-    // ==============================
-    // LOGIN USER (FIXED to return name and email)
-    // ===================================
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         try {

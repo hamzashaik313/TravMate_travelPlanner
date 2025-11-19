@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Dialog,
   DialogContent,
@@ -7,8 +8,8 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { useEffect, useState } from "react";
-import { useToast } from "@/hooks/use-toast";
-import { apiFetch } from "@/lib/api";
+import { API_BASE } from "@/lib/api";
+import { MapPin, ExternalLink, Star } from "lucide-react";
 
 type Review = {
   author_name?: string;
@@ -39,239 +40,156 @@ export function PlaceDetailModal({
 }) {
   const [details, setDetails] = useState<PlaceDetails | null>(null);
   const [loading, setLoading] = useState(false);
+
   const [photoIndex, setPhotoIndex] = useState<number | null>(null);
-  const { toast } = useToast();
 
   useEffect(() => {
     if (!isOpen || !activityName) return;
 
-    const fetchDetails = async () => {
-      setLoading(true);
-      try {
-        const url = `/api/places/${encodeURIComponent(activityName)}`;
-        const res = await apiFetch<any>(url);
+    setLoading(true);
 
-        if (res && res.status === "OK" && res.result) {
-          const r = res.result;
-          setDetails({
-            name: r.name,
-            formatted_address: r.formatted_address,
-            rating: r.rating,
-            user_ratings_total: r.user_ratings_total,
-            website: r.website,
-            url: r.url,
-            photos: Array.isArray(r.photos) ? r.photos : [],
-            reviews: Array.isArray(r.reviews) ? r.reviews : [],
-          });
+    fetch(
+      `${API_BASE}/api/places/details?query=${encodeURIComponent(activityName)}`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.status === "OK") {
+          setDetails(data.result);
         } else {
           setDetails(null);
         }
-      } catch (e: any) {
-        toast({
-          title: "Search Error",
-          description: "Failed to load Google Places details.",
-          variant: "destructive",
-        });
-        setDetails(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchDetails();
-  }, [isOpen, activityName, toast]);
-
-  const truncate = (text: string | undefined, n = 220) =>
-    !text ? "" : text.length > n ? text.slice(0, n).trim() + "…" : text;
-
-  const nextPhoto = () =>
-    setPhotoIndex((i) =>
-      i !== null && details?.photos ? (i + 1) % details.photos.length : i
-    );
-  const prevPhoto = () =>
-    setPhotoIndex((i) =>
-      i !== null && details?.photos
-        ? (i - 1 + details.photos.length) % details.photos.length
-        : i
-    );
+      })
+      .finally(() => setLoading(false));
+  }, [isOpen, activityName]);
 
   return (
-    <>
-      {/* ---- MAIN MODAL ---- */}
-      <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-[720px]">
-          <DialogHeader>
-            <DialogTitle className="flex items-center justify-between">
-              <span className="text-lg font-semibold">{activityName}</span>
-              {!loading && details?.rating && (
-                <span className="text-sm bg-gray-100 dark:bg-neutral-800 rounded-md px-2 py-1">
-                  ⭐ {details.rating} ({details.user_ratings_total ?? 0})
-                </span>
-              )}
-            </DialogTitle>
-            <DialogDescription>
-              {loading
-                ? "Searching for details..."
-                : "Location details fetched from Google Places."}
-            </DialogDescription>
-          </DialogHeader>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto rounded-xl p-0">
+        <DialogHeader className="p-6 pb-3">
+          <DialogTitle className="text-xl font-semibold">
+            {activityName}
+          </DialogTitle>
+          <DialogDescription>Google Places information</DialogDescription>
+        </DialogHeader>
 
-          <div className="space-y-5 py-3">
-            {loading ? (
-              <p className="text-center text-sm text-muted-foreground">
-                Loading details...
+        {loading && <p className="p-6">Loading…</p>}
+
+        {!loading && details && (
+          <div className="p-6 space-y-6">
+            {/* ===== PHOTOS GRID ===== */}
+            {details.photos?.length ? (
+              <div className="grid grid-cols-3 gap-2">
+                {details.photos.map((p, i) => (
+                  <img
+                    key={i}
+                    src={p}
+                    className="rounded-xl h-28 w-full object-cover cursor-pointer hover:scale-[1.03] transition"
+                    onClick={() => setPhotoIndex(i)}
+                  />
+                ))}
+              </div>
+            ) : null}
+
+            {/* ===== ADDRESS ===== */}
+            <div>
+              <p className="flex items-center gap-2 text-gray-700 font-medium">
+                <MapPin size={18} />
+                {details.formatted_address}
               </p>
-            ) : details ? (
-              <>
-                {/* ---- Address and Actions ---- */}
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 border-b pb-3">
-                  <div>
-                    <p className="text-sm text-muted-foreground">
-                      <strong>Address:</strong>{" "}
-                      {details.formatted_address ?? "N/A"}
-                    </p>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {details.website && (
-                      <a
-                        href={details.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm border rounded-md px-3 py-1 hover:bg-gray-50"
-                      >
-                        Visit Website
-                      </a>
-                    )}
-                    {details.url && (
-                      <a
-                        href={details.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm border rounded-md px-3 py-1 hover:bg-gray-50"
-                      >
-                        View on Google Maps
-                      </a>
-                    )}
-                    <button
-                      onClick={onClose}
-                      className="text-sm border rounded-md px-3 py-1 hover:bg-gray-50"
-                    >
-                      Close
-                    </button>
-                  </div>
-                </div>
+            </div>
 
-                {/* ---- Photos Grid ---- */}
-                {details.photos && details.photos.length > 0 && (
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <strong>Photos</strong>
-                      <span className="text-xs text-muted-foreground">
-                        {details.photos.length} photo(s)
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                      {details.photos.map((photo, idx) => (
-                        <img
-                          key={idx}
-                          src={photo}
-                          alt={`photo-${idx}`}
-                          onClick={() => setPhotoIndex(idx)}
-                          className="cursor-pointer rounded-lg object-cover h-28 w-full hover:scale-105 transition-transform duration-150"
-                        />
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* ---- Reviews ---- */}
-                {details.reviews && details.reviews.length > 0 && (
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <strong>Top Reviews</strong>
-                      <span className="text-xs text-muted-foreground">
-                        {details.reviews.length} review(s)
-                      </span>
-                    </div>
-
-                    <div className="space-y-3">
-                      {details.reviews.map((r, i) => (
-                        <div
-                          key={i}
-                          className="p-3 rounded-md border bg-gray-50 dark:bg-neutral-900"
-                        >
-                          <div className="flex justify-between items-center">
-                            <span className="font-medium text-sm">
-                              {r.author_name ?? "Unknown"}
-                            </span>
-                            <span className="text-sm">
-                              ⭐ {r.rating ?? "-"}
-                            </span>
-                          </div>
-                          <p className="text-xs text-gray-500 mb-1">
-                            {r.relative_time_description ?? ""}
-                          </p>
-                          <p className="text-sm text-gray-700 dark:text-gray-300">
-                            {truncate(r.text, 250)}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </>
-            ) : (
-              <p className="text-center text-muted-foreground text-sm">
-                No results found for this activity.
+            {/* ===== RATING ===== */}
+            {details.rating && (
+              <p className="flex items-center gap-1 text-gray-800">
+                <Star size={18} className="text-yellow-500" />
+                {details.rating} ({details.user_ratings_total} reviews)
               </p>
             )}
-          </div>
-        </DialogContent>
-      </Dialog>
 
-      {/* ---- PHOTO CAROUSEL MODAL ---- */}
+            {/* ===== LINKS ===== */}
+            <div className="space-y-2 mt-2">
+              {details.website && (
+                <a
+                  href={details.website}
+                  target="_blank"
+                  className="text-blue-600 flex items-center gap-1 hover:underline"
+                >
+                  Visit Website <ExternalLink size={16} />
+                </a>
+              )}
+
+              {details.url && (
+                <a
+                  href={details.url}
+                  target="_blank"
+                  className="text-blue-600 flex items-center gap-1 hover:underline"
+                >
+                  View on Google Maps <ExternalLink size={16} />
+                </a>
+              )}
+            </div>
+
+            {/* ===== REVIEWS ===== */}
+            {details.reviews?.length ? (
+              <div className="space-y-3">
+                <h2 className="text-lg font-semibold">Reviews</h2>
+                {details.reviews.map((r, i) => (
+                  <div
+                    key={i}
+                    className="border rounded-xl p-4 bg-gray-50 text-gray-800"
+                  >
+                    <p className="font-semibold">{r.author_name}</p>
+                    <p className="text-sm text-gray-500 mb-2">
+                      {r.relative_time_description}
+                    </p>
+                    <p>{r.text}</p>
+                  </div>
+                ))}
+              </div>
+            ) : null}
+          </div>
+        )}
+      </DialogContent>
+
+      {/* ===== FULLSCREEN PHOTO VIEWER ===== */}
       {photoIndex !== null && details?.photos && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[9999]"
-          onClick={() => setPhotoIndex(null)}
-        >
+        <div className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center">
+          {/* Close */}
           <button
-            className="absolute top-6 right-6 text-white text-2xl"
             onClick={() => setPhotoIndex(null)}
+            className="absolute top-4 right-4 text-white text-3xl"
           >
             ✕
           </button>
 
-          {/* Prev */}
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              prevPhoto();
-            }}
-            className="absolute left-8 text-white text-3xl font-bold"
-          >
-            ‹
-          </button>
+          {/* Left arrow */}
+          {photoIndex > 0 && (
+            <button
+              onClick={() => setPhotoIndex(photoIndex - 1)}
+              className="absolute left-4 text-white text-5xl select-none"
+            >
+              ‹
+            </button>
+          )}
 
+          {/* Photo */}
           <img
             src={details.photos[photoIndex]}
-            alt="full-size"
-            className="max-h-[90vh] max-w-[90vw] rounded-lg object-contain shadow-lg"
-            onClick={(e) => e.stopPropagation()}
+            className="max-h-[85vh] max-w-[90vw] object-contain rounded-lg shadow-lg"
           />
 
-          {/* Next */}
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              nextPhoto();
-            }}
-            className="absolute right-8 text-white text-3xl font-bold"
-          >
-            ›
-          </button>
+          {/* Right arrow */}
+          {photoIndex < details.photos.length - 1 && (
+            <button
+              onClick={() => setPhotoIndex(photoIndex + 1)}
+              className="absolute right-4 text-white text-5xl select-none"
+            >
+              ›
+            </button>
+          )}
         </div>
       )}
-    </>
+    </Dialog>
   );
 }
+
