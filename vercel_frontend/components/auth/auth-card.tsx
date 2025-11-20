@@ -13,6 +13,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+
 import { useToast } from "@/hooks/use-toast";
 import { postJson } from "@/lib/api";
 import { useAuth } from "./auth-context";
@@ -60,29 +61,24 @@ export function AuthCard() {
   const handleLogin = async () => {
     setLoading(true);
     try {
-      // Call backend login API
       const res = await postJson<{
         token: string;
         displayName: string;
         email: string;
       }>("/auth/login", { email, password }, { withAuth: false });
 
-      // Build user object for auth context
       const user = {
-        name: res.displayName || res.email.split("@")[0], // fallback if displayName is missing
+        name: res.displayName || res.email.split("@")[0],
         email: res.email,
       };
 
-      // Save login state
       login(res.token, user);
 
-      // Show toast / popup
       toast({
         title: "Welcome",
         description: `Logged in as ${user.name}`,
       });
 
-      // Redirect to dashboard
       router.push("/dashboard");
     } catch (e: any) {
       toast({
@@ -105,6 +101,7 @@ export function AuthCard() {
           Plan, track, and explore your trips with ease.
         </CardDescription>
       </CardHeader>
+
       <CardContent>
         <Tabs value={tab} onValueChange={(v) => setTab(v as any)}>
           <TabsList className="grid grid-cols-2">
@@ -123,6 +120,7 @@ export function AuthCard() {
                   placeholder="Alex Traveler"
                 />
               </div>
+
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -133,6 +131,7 @@ export function AuthCard() {
                   placeholder="you@example.com"
                 />
               </div>
+
               <div className="grid gap-2">
                 <Label htmlFor="password">Password</Label>
                 <Input
@@ -143,6 +142,7 @@ export function AuthCard() {
                   placeholder="••••••••"
                 />
               </div>
+
               <Button
                 className="w-full"
                 onClick={handleSignUp}
@@ -165,6 +165,7 @@ export function AuthCard() {
                   placeholder="you@example.com"
                 />
               </div>
+
               <div className="grid gap-2">
                 <Label htmlFor="login-password">Password</Label>
                 <Input
@@ -175,6 +176,7 @@ export function AuthCard() {
                   placeholder="••••••••"
                 />
               </div>
+
               <Button
                 className="w-full"
                 onClick={handleLogin}

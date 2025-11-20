@@ -4,10 +4,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
+        import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+        import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 @RequestMapping("/api/places")
@@ -111,7 +111,42 @@ public class GooglePlacesController {
         }
     }
 
-
+    //
+//    @GetMapping("/photo")
+//    public ResponseEntity<Map<String, Object>> getPhoto(
+//            @RequestParam("destination") String destination) {
+//
+//        try {
+//            String searchUrl = TEXT_URL +
+//                    "?query=" + destination +
+//                    "&key=" + apiKey;
+//
+//            Map<String, Object> search = restTemplate.getForObject(searchUrl, Map.class);
+//            List<Map<String, Object>> results = (List<Map<String, Object>>) search.get("results");
+//
+//            if (results == null || results.isEmpty()) {
+//                return ResponseEntity.ok(Map.of("photo", ""));
+//            }
+//
+//            Map<String, Object> first = results.get(0);
+//            List<Map<String, Object>> photos = (List<Map<String, Object>>) first.get("photos");
+//
+//            if (photos == null || photos.isEmpty()) {
+//                return ResponseEntity.ok(Map.of("photo", ""));
+//            }
+//
+//            String ref = (String) photos.get(0).get("photo_reference");
+//
+//            String photoUrl = PHOTO_URL +
+//                    "?maxwidth=1200&photo_reference=" + ref +
+//                    "&key=" + apiKey;
+//
+//            return ResponseEntity.ok(Map.of("photo", photoUrl));
+//
+//        } catch (Exception e) {
+//            return ResponseEntity.ok(Map.of("photo", ""));
+//        }
+//    }
     @GetMapping("/photo")
     public ResponseEntity<Map<String, Object>> getPhoto(
             @RequestParam("destination") String destination) {
@@ -124,17 +159,22 @@ public class GooglePlacesController {
             Map<String, Object> search = restTemplate.getForObject(searchUrl, Map.class);
             List<Map<String, Object>> results = (List<Map<String, Object>>) search.get("results");
 
+            // If no place found
             if (results == null || results.isEmpty()) {
-                return ResponseEntity.ok(Map.of("photo", ""));
+                return ResponseEntity.ok(Map.of("photo", null));
             }
 
             Map<String, Object> first = results.get(0);
-            List<Map<String, Object>> photos = (List<Map<String, Object>>) first.get("photos");
 
+            List<Map<String, Object>> photos =
+                    (List<Map<String, Object>>) first.get("photos");
+
+            // If place has no photos → return null (NOT empty string)
             if (photos == null || photos.isEmpty()) {
-                return ResponseEntity.ok(Map.of("photo", ""));
+                return ResponseEntity.ok(Map.of("photo", null));
             }
 
+            // Build Google photo URL
             String ref = (String) photos.get(0).get("photo_reference");
 
             String photoUrl = PHOTO_URL +
@@ -144,9 +184,10 @@ public class GooglePlacesController {
             return ResponseEntity.ok(Map.of("photo", photoUrl));
 
         } catch (Exception e) {
-            return ResponseEntity.ok(Map.of("photo", ""));
+            return ResponseEntity.ok(Map.of("photo", null));
         }
     }
+
 
     @Scheduled(fixedRate = 86400000)
     public void clearCache() {

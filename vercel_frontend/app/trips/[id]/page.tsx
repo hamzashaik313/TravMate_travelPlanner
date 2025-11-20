@@ -1,72 +1,55 @@
-//trips/id/page.tsx
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import useSWR from "swr";
-import { swrFetcher } from "@/lib/api";
-import { useAuth } from "@/components/auth/auth-context";
-import { AppHeader } from "@/components/header";
-import { TripSummary } from "@/components/trips/trip-summary";
-import { ItineraryPanel } from "@/components/trips/itinerary-panel";
+import { getJson } from "@/lib/api";
 import { TripHero } from "@/components/trips/trip-hero";
+import { ItineraryPanel } from "@/components/trips/itinerary-panel";
+import { TripSummary } from "@/components/trips/trip-summary";
 
-export type TripDetail = {
-  id: string;
-  title: string;
-  destination: string;
-  startDate: string;
-  endDate: string;
-};
+import type { TripDetail } from "@/types/TripDetail";
 
 export default function TripDetailPage() {
-  const { isAuthenticated } = useAuth();
+  const { id } = useParams();
   const router = useRouter();
-  const params = useParams<{ id: string }>();
-  const tripId = params?.id as string;
+
+  const [trip, setTrip] = useState<TripDetail | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const loadTrip = async () => {
+    try {
+      const data = await getJson<TripDetail>(`/api/trips/${id}`);
+      setTrip(data);
+    } catch (e) {
+      console.error(e);
+      router.push("/dashboard");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    if (!isAuthenticated) router.replace("/");
-  }, [isAuthenticated, router]);
+    loadTrip();
+  }, [id]);
 
-  const {
-    data: trip,
-    error,
-    isLoading,
-    mutate,
-  } = useSWR<TripDetail>(tripId ? `/api/trips/${tripId}` : null, swrFetcher);
-
-  if (!isAuthenticated) return null;
+  if (loading) return <div className="p-10 text-center">Loading…</div>;
+  if (!trip) return <div className="p-10 text-center">Trip not found</div>;
 
   return (
-    <div className="min-h-dvh flex flex-col">
-      <AppHeader />
+    <div className="max-w-5xl mx-auto p-4 space-y-6">
+      {/* HERO COMPONENT */}
+      <TripHero
+        destination={trip.destination}
+        title={trip.title}
+        startDate={trip.startDate}
+        endDate={trip.endDate}
+      />
 
-      {/* ⭐ Add trip hero */}
-      {trip && (
-        <div className="px-4 pb-4">
-          <TripHero
-            destination={trip.destination}
-            title={trip.title}
-            startDate={trip.startDate}
-            endDate={trip.endDate}
-          />
-        </div>
-      )}
+      {/* SUMMARY BAR */}
+      <TripSummary trip={trip} onChanged={loadTrip} />
 
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6">
-        {isLoading && (
-          <div className="text-muted-foreground">Loading trip...</div>
-        )}
-        {error && <div className="text-destructive">Failed to load trip.</div>}
-
-        {trip && (
-          <div className="grid gap-6">
-            <TripSummary trip={trip} onChanged={() => mutate()} />
-            <ItineraryPanel tripId={trip.id} />
-          </div>
-        )}
-      </main>
+      {/* ITINERARY */}
+      <ItineraryPanel tripId={trip.id} />
     </div>
   );
 }

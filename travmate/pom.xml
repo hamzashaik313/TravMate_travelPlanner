@@ -102,6 +102,15 @@
 			<version>20230227</version>
 		</dependency>
 
+		<!-- add inside <dependencies> -->
+
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.14</version>
+		</dependency>
+
+
 
 
 

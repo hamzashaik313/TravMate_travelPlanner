@@ -1,5 +1,5 @@
-@import 'tailwindcss';
-@import 'tw-animate-css';
+@import "tailwindcss";
+@import "tw-animate-css";
 @import "react-medium-image-zoom/dist/styles.css";
 
 @custom-variant dark (&:is(.dark *));
@@ -123,4 +123,83 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.15) 2px,
+      transparent 2px
+    ),
+    radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 4px 4px, 6px 6px;
+  pointer-events: none;
+  opacity: 0.15;
+  z-index: 1;
+}
+
+.auth-card {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(22px);
+  border-radius: 22px;
+  padding: 28px;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.35);
+}
+
+.auth-inner {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  padding: 24px;
+  backdrop-filter: blur(18px);
+}
+
+.premium-input {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  color: white !important;
+  backdrop-filter: blur(10px);
+}
+
+.premium-input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.premium-btn {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.25) !important;
+  color: white !important;
+  border-radius: 10px;
+  backdrop-filter: blur(12px);
+  transition: 0.25s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.premium-btn:hover {
+  background: rgba(255, 255, 255, 0.45) !important;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fadeInUp 0.9s ease-out forwards;
 }

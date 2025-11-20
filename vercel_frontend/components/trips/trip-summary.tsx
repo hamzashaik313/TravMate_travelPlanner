@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import type { TripDetail } from "@/app/trips/[id]/page";
+import type { TripDetail } from "@/types/TripDetail";
 
 export function TripSummary({
   trip,
@@ -174,4 +174,3 @@ export function TripSummary({
     </Card>
   );
 }
-

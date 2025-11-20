@@ -1,4 +1,4 @@
-//TripCards.tsx
+//Components/trips/TripCards.tsx
 "use client";
 
 import useSWR from "swr";
@@ -65,8 +65,11 @@ function TripCard({ trip, onClick }: { trip: Trip; onClick: () => void }) {
       )}`
     )
       .then((res) => res.json())
-      .then((data) => setPhoto(data?.photo ?? null))
-      .catch(() => {});
+      .then((data) => {
+        console.log("PHOTO FOR:", trip.destination, "=>", data.photo);
+        setPhoto(data?.photo ?? null);
+      })
+      .catch(console.error);
   }, [trip.destination]);
 
   return (
