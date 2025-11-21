@@ -1,15 +1,11 @@
 "use client";
 
-import type React from "react";
-
-import { AuthProvider } from "@/components/auth/auth-context";
-import { Toaster } from "@/components/ui/toaster";
+import { ThemeProvider } from "next-themes";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <AuthProvider>
+    <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
       {children}
-      <Toaster />
-    </AuthProvider>
+    </ThemeProvider>
   );
 }
