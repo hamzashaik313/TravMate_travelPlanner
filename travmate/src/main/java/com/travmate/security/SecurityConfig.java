@@ -55,6 +55,7 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
                     .requestMatchers("/auth/**").permitAll().requestMatchers("/error").permitAll()   // Public endpoints
                     .requestMatchers("/api/places/**").permitAll()           // ✅ allow Google Places API without login
 //                    .requestMatchers("/api/geoapify/**").permitAll()         // (optional) if still present
+                     .requestMatchers("/api/auth/**", "/ws/**", "/topic/**").permitAll()
                     .requestMatchers("/api/user/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN")
                     .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
                     .anyRequest().authenticated() // Everything else requires auth

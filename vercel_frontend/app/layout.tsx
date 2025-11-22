@@ -31,7 +31,6 @@
 //   );
 // }
 
-//
 // app/layout.tsx
 import type React from "react";
 import type { Metadata } from "next";
@@ -43,6 +42,10 @@ import "./globals.css";
 import { Providers } from "@/components/providers";
 import { AuthProvider } from "@/components/auth/auth-context";
 import { ThemeProvider } from "@/components/theme-provider";
+
+// ✅ Import our new components
+import NotificationsProvider from "@/components/NotificationsProvider";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "TravMate",
@@ -59,7 +62,14 @@ export default function RootLayout({
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
         <ThemeProvider attribute="class" defaultTheme="light">
           <AuthProvider>
-            <Providers>{children}</Providers>
+            <Providers>
+              {/* ✅ Add Notifications + Toast */}
+              <NotificationsProvider />
+              <Toaster richColors position="top-right" />
+
+              {/* ✅ Page Content */}
+              {children}
+            </Providers>
           </AuthProvider>
         </ThemeProvider>
 

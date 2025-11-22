@@ -1,73 +1,63 @@
-"use client";
+export const API_BASE = "http://localhost:8080";
 
-import { getStoredAuth } from "@/lib/auth-storage";
+export async function getJson(path: string) {
+  const token = localStorage.getItem("token");
 
-export const API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080";
-
-type Json = Record<string, unknown> | unknown[];
-
-export async function apiFetch<T = any>(
-  path: string,
-  options: RequestInit = {},
-  { withAuth = true }: { withAuth?: boolean } = { withAuth: true }
-): Promise<T> {
-  const url = path.startsWith("http") ? path : `${API_BASE}${path}`;
-
-  const headers = new Headers(options.headers || {});
-  headers.set("Content-Type", "application/json");
-
-  if (withAuth) {
-    const { token } = getStoredAuth();
-    if (token) headers.set("Authorization", `Bearer ${token}`);
-  }
-
-  const res = await fetch(url, { ...options, headers });
+  const res = await fetch(API_BASE + path, {
+    headers: {
+      Authorization: token ? `Bearer ${token}` : "",
+    },
+  });
 
   if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    throw new Error(text || `Request failed: ${res.status}`);
+    const errorText = await res.text();
+    throw new Error(`Error ${res.status}: ${errorText}`);
   }
 
-  if (res.status === 204) return undefined as unknown as T;
-
-  return (await res.json()) as T;
+  return res.json();
 }
 
-export async function postJson<T = any>(
-  path: string,
-  body: Json,
-  opts?: { withAuth?: boolean }
-) {
-  return apiFetch<T>(
-    path,
-    { method: "POST", body: JSON.stringify(body) },
-    opts
-  );
+export async function postJson(path: string, body: any) {
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(API_BASE + path, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: token ? `Bearer ${token}` : "",
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
 }
 
-export async function putJson<T = any>(
-  path: string,
-  body: Json,
-  opts?: { withAuth?: boolean }
-) {
-  return apiFetch<T>(path, { method: "PUT", body: JSON.stringify(body) }, opts);
+export async function putJson(path: string, body: any) {
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(API_BASE + path, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: token ? `Bearer ${token}` : "",
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
 }
 
-export async function del<T = any>(
-  path: string,
-  opts?: { withAuth?: boolean }
-) {
-  return apiFetch<T>(path, { method: "DELETE" }, opts);
-}
+export async function del(path: string) {
+  const token = localStorage.getItem("token");
 
-// GET JSON
-export async function getJson<T = any>(
-  path: string,
-  opts?: { withAuth?: boolean }
-) {
-  return apiFetch<T>(path, { method: "GET" }, opts);
-}
+  const res = await fetch(API_BASE + path, {
+    method: "DELETE",
+    headers: {
+      Authorization: token ? `Bearer ${token}` : "",
+    },
+  });
 
-// SWR fetcher
-export const swrFetcher = (path: string) => apiFetch(path);
+  if (!res.ok) throw new Error(await res.text());
+}

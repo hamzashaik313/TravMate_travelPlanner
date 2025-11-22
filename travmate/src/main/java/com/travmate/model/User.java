@@ -1,4 +1,3 @@
-
 package com.travmate.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -16,13 +15,13 @@ public class User {
     private String email;
 
     @Column(nullable = false)
-    @JsonIgnore   //  hides password from JSON response
+    @JsonIgnore
     private String password;
 
     private String name;
 
     @Column(nullable = false)
-    private String role = "ROLE_USER"; // default role
+    private String role = "ROLE_USER";
 
     public User() {}
 

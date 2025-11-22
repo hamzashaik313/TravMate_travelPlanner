@@ -132,7 +132,7 @@ export function ItineraryPanel({ tripId }: { tripId: string }) {
   const generate = async () => {
     setLoading(true);
     try {
-      const res = await postJson<ItineraryItem[]>(
+      const res: ItineraryItem[] | null = await postJson(
         `/api/itinerary/generate/${tripId}`,
         {}
       );
