@@ -12,6 +12,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/user")  // 🔑 changed from /api/users to /api/user
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+
+
 public class UserController {
 
     @Autowired

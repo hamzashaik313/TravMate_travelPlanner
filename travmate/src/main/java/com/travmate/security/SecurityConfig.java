@@ -44,26 +44,26 @@ public class SecurityConfig {
     }
 
 
-@Bean
-public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http
-            .csrf(csrf -> csrf.disable())  // Disable CSRF for API
-            .cors(Customizer.withDefaults())
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(csrf -> csrf.disable())  // Disable CSRF for API
+                .cors(Customizer.withDefaults())
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // JWT: stateless
-            .authorizeHttpRequests(auth -> auth
-                    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()  // Allow preflight
-                    .requestMatchers("/auth/**").permitAll().requestMatchers("/error").permitAll()   // Public endpoints
-                    .requestMatchers("/api/places/**").permitAll()           // ✅ allow Google Places API without login
-//                    .requestMatchers("/api/geoapify/**").permitAll()         // (optional) if still present
-                    .requestMatchers("/api/user/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN")
-                    .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
-                    .anyRequest().authenticated() // Everything else requires auth
-            )
-            .authenticationProvider(authProvider())
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                .authorizeHttpRequests(auth -> auth
+                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()  // Allow preflight
+                                .requestMatchers("/auth/**").permitAll().requestMatchers("/error").permitAll()   // Public endpoints
+                                .requestMatchers("/api/places/**").permitAll()           // ✅ allow Google Places API without login
+                                .requestMatchers("/api/user/email").permitAll()
+                                .requestMatchers("/api/user/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN")
+                                .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
+                                .anyRequest().authenticated() // Everything else requires auth
+                )
+                .authenticationProvider(authProvider())
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
-    return http.build();
-}
+        return http.build();
+    }
 
 }
 
