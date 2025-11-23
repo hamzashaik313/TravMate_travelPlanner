@@ -52,7 +52,8 @@ public class SecurityConfig {
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // JWT: stateless
                 .authorizeHttpRequests(auth -> auth
                                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()  // Allow preflight
-                                .requestMatchers("/auth/**").permitAll().requestMatchers("/error").permitAll()   // Public endpoints
+                        .requestMatchers("/auth/**", "/uploads/**").permitAll()
+                        .requestMatchers("/error").permitAll()   // Public endpoints
                                 .requestMatchers("/api/places/**").permitAll()           // ✅ allow Google Places API without login
                                 .requestMatchers("/api/user/email").permitAll()
                                 .requestMatchers("/api/user/**").hasAnyAuthority("ROLE_USER","ROLE_ADMIN")
