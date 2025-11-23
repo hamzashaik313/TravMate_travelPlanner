@@ -1,4 +1,3 @@
-
 package com.travmate.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -16,10 +15,14 @@ public class User {
     private String email;
 
     @Column(nullable = false)
-    @JsonIgnore   //  hides password from JSON response
+    @JsonIgnore // hides password from JSON response
     private String password;
 
     private String name;
+    private String phone;
+    private String bio;
+    private String preferredCurrency = "INR";
+    private String preferredLanguage = "English";
 
     @Column(nullable = false)
     private String role = "ROLE_USER"; // default role
@@ -33,7 +36,7 @@ public class User {
         this.role = role;
     }
 
-    // Getters & Setters
+    // --- Getters & Setters ---
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -45,6 +48,18 @@ public class User {
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
+
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+
+    public String getBio() { return bio; }
+    public void setBio(String bio) { this.bio = bio; }
+
+    public String getPreferredCurrency() { return preferredCurrency; }
+    public void setPreferredCurrency(String preferredCurrency) { this.preferredCurrency = preferredCurrency; }
+
+    public String getPreferredLanguage() { return preferredLanguage; }
+    public void setPreferredLanguage(String preferredLanguage) { this.preferredLanguage = preferredLanguage; }
 
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
