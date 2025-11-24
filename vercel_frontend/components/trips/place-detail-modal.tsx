@@ -152,12 +152,18 @@ export function PlaceDetailModal({
       </DialogContent>
 
       {/* ===== FULLSCREEN PHOTO VIEWER ===== */}
+      {/* ===== FULLSCREEN PHOTO VIEWER ===== */}
+      {/* ===== FULLSCREEN PHOTO VIEWER (TRULY FULLSCREEN) ===== */}
+      {/* ===== FIXED FULLSCREEN PHOTO VIEWER ===== */}
+      {/* ===== TRUE FULLSCREEN PHOTO VIEWER ===== */}
+      {/* ===== ABSOLUTE FULLSCREEN PHOTO VIEWER ===== */}
+      {/* ===== FULLSCREEN PHOTO VIEWER WITH SOFT CURVES ===== */}
       {photoIndex !== null && details?.photos && (
-        <div className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center">
-          {/* Close */}
+        <div className="fixed inset-0 z-[999999] bg-black/95 flex items-center justify-center overflow-hidden backdrop-blur-sm transition-opacity duration-500">
+          {/* Close button */}
           <button
             onClick={() => setPhotoIndex(null)}
-            className="absolute top-4 right-4 text-white text-3xl"
+            className="absolute top-6 right-8 text-white text-4xl font-bold hover:scale-110 transition"
           >
             ✕
           </button>
@@ -166,23 +172,24 @@ export function PlaceDetailModal({
           {photoIndex > 0 && (
             <button
               onClick={() => setPhotoIndex(photoIndex - 1)}
-              className="absolute left-4 text-white text-5xl select-none"
+              className="absolute left-8 text-white text-6xl font-bold hover:scale-125 transition"
             >
               ‹
             </button>
           )}
 
-          {/* Photo */}
+          {/* The Image – fullscreen but with rounded corners */}
           <img
             src={details.photos[photoIndex]}
-            className="max-h-[85vh] max-w-[90vw] object-contain rounded-lg shadow-lg"
+            alt="place"
+            className="max-w-[95vw] max-h-[95vh] object-contain rounded-2xl shadow-[0_0_30px_rgba(0,0,0,0.8)] transition-transform duration-500"
           />
 
           {/* Right arrow */}
           {photoIndex < details.photos.length - 1 && (
             <button
               onClick={() => setPhotoIndex(photoIndex + 1)}
-              className="absolute right-4 text-white text-5xl select-none"
+              className="absolute right-8 text-white text-6xl font-bold hover:scale-125 transition"
             >
               ›
             </button>
@@ -192,5 +199,3 @@ export function PlaceDetailModal({
     </Dialog>
   );
 }
-
-

@@ -49,9 +49,11 @@ export function AuthCard() {
       setTab("login");
     } catch (e: any) {
       toast({
-        title: "Sign up failed",
-        description: e.message,
-        variant: "destructive",
+        title: "Login failed 😕",
+        description: "Invalid email or password. Please try again.",
+        duration: 4000,
+        className:
+          "bg-gradient-to-r from-red-500 to-red-600 text-white font-medium border-none shadow-lg",
       });
     } finally {
       setLoading(false);
