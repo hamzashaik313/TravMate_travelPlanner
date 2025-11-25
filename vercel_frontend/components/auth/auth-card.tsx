@@ -60,6 +60,38 @@ export function AuthCard() {
     }
   };
 
+  // const handleLogin = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const res = await postJson<{
+  //       token: string;
+  //       displayName: string;
+  //       email: string;
+  //     }>("/auth/login", { email, password }, { withAuth: false });
+
+  //     const user = {
+  //       name: res.displayName || res.email.split("@")[0],
+  //       email: res.email,
+  //     };
+
+  //     login(res.token, user);
+
+  //     toast({
+  //       title: "Welcome",
+  //       description: `Logged in as ${user.name}`,
+  //     });
+
+  //     router.push("/dashboard");
+  //   } catch (e: any) {
+  //     toast({
+  //       title: "Login failed",
+  //       description: e.message || "Invalid email or password",
+  //       variant: "destructive",
+  //     });
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   const handleLogin = async () => {
     setLoading(true);
     try {
@@ -77,16 +109,20 @@ export function AuthCard() {
       login(res.token, user);
 
       toast({
-        title: "Welcome",
+        title: "Welcome 👋",
         description: `Logged in as ${user.name}`,
+        className:
+          "bg-gradient-to-r from-green-500 to-emerald-600 text-white font-medium border-none shadow-lg",
       });
 
       router.push("/dashboard");
     } catch (e: any) {
       toast({
-        title: "Login failed",
-        description: e.message || "Invalid email or password",
-        variant: "destructive",
+        title: "Invalid credentials 😕",
+        description: "Wrong email or password. Please try again.",
+        duration: 4000,
+        className:
+          "bg-gradient-to-r from-red-500 to-red-600 text-white font-medium border-none shadow-lg",
       });
     } finally {
       setLoading(false);
